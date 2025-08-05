@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Glyph: No‑Code AI Agent for Solana Memecoin Research & Trading</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg: #07080c;
+      --bg2: #0a0c12;
+      --ink: #e9eef7;
+      --muted: #9fb0c9;
+      --accent: #7cf7cf;
+      --accent-2: #7cb8ff;
+      --accent-3: #ff89f7;
+      --warning: #ffd166;
+      --danger: #ff6b6b;
+      --glass: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.12);
+      --grid: rgba(124, 248, 207, 0.08);
+      --shadow: 0 10px 30px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.05);
+      --radius-1: 14px;
+      --radius-2: 22px;
+      --radius-3: 32px;
+    }
+
+    /* Unique geometric variable font inspired look (procedural via CSS only) */
+    @font-face {
+      font-family: "InterVarLocal";
+      src: local("Inter var"), local("InterVariable");
+      font-weight: 100 900;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "JetBrainsMono";
+      src: local("JetBrains Mono"), local("JetBrainsMono");
+      font-weight: 100 900;
+      font-display: swap;
+    }
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 70% -10%, #0b1220 0%, var(--bg) 60%) fixed, linear-gradient(180deg, #06070b 0%, #06070b 40%, #07080c 100%) fixed;
+      color: var(--ink);
+      font-family: InterVarLocal, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.25;
+      overflow-x: hidden;
+    }
+    *{ box-sizing: border-box; }
+
+    /* Animated background grid */
+    .grid{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, var(--grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px;
+      mask-image: radial-gradient(60% 60% at 70% 10%, #000 30%, transparent 100%);
+      animation: drift 24s linear infinite;
+      z-index: 0;
+    }
+    @keyframes drift{
+      from{ background-position: 0 0, 0 0; }
+      to{ background-position: 200px 200px, 200px 200px; }
+    }
+
+    /* Neon aurora beams */
+    .aurora{
+      position: fixed;
+      inset: -20vmax;
+      background:
+        radial-gradient(40vmax 30vmax at 20% 20%, rgba(124, 247, 207,0.10), transparent 60%),
+        radial-gradient(50vmax 40vmax at 80% 10%, rgba(124,184,255,0.12), transparent 60%),
+        radial-gradient(40vmax 40vmax at 50% 100%, rgba(255,137,247,0.08), transparent 60%);
+      filter: blur(30px) saturate(120%);
+      mix-blend-mode: screen;
+      animation: auroraFloat 18s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    @keyframes auroraFloat{
+      0%{ transform: translateY(-2%) scale(1); }
+      100%{ transform: translateY(2%) scale(1.02); }
+    }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(8,10,15,0.7), rgba(8,10,15,0.2));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+    .brand .logo{
+      width: 28px; height: 28px;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
+      border-radius: 8px;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.05), 0 10px 20px rgba(124,184,255,0.2);
+      transform: rotate(8deg);
+    }
+    .center-tabs{
+      display: flex; justify-content: center; gap: 18px;
+      font-size: 14px; color: var(--muted);
+    }
+    .center-tabs a{
+      padding: 8px 12px; border-radius: 10px; text-decoration: none; color: inherit;
+      transition: 0.2s ease;
+    }
+    .center-tabs a:hover{ color: var(--ink); background: var(--glass); }
+    .cta-row{
+      display: flex; justify-content: end; gap: 10px;
+    }
+    .btn{
+      appearance: none; border: 0; cursor: pointer;
+      padding: 10px 14px; border-radius: 12px; font-weight: 700;
+      background: var(--glass); color: var(--ink);
+      box-shadow: var(--shadow);
+      transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
+    }
+    .btn:hover{ transform: translateY(-2px); background: var(--glass-2); }
+    .btn.primary{
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #041314;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+      box-shadow: 0 10px 25px rgba(124,247,207,0.25);
+    }
+    .btn.ghost{
+      outline: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .hero{
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 40px auto 0; padding: 40px 18px 20px;
+      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 26px;
+    }
+    .headline{
+      font-weight: 900; letter-spacing: -0.02em; line-height: 0.98;
+      font-size: clamp(36px, 8vw, 80px);
+      background: linear-gradient(180deg, #F5FAFF 0%, #9CC3FF 80%, #75ffd7 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 10px 20px rgba(124,184,255,.12));
+    }
+    .sub{
+      color: var(--muted); font-size: clamp(14px, 2.2vw, 18px); margin-top: 14px;
+    }
+    .hero-cta{
+      margin-top: 22px; display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .pill{
+      display: inline-flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 999px; background: var(--glass); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted); font-size: 13px;
+    }
+    .pill .dot{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--accent));
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); opacity: 0.9;}
+      50%{ transform: scale(1.25); opacity: 1;}
+    }
+
+    /* Right side: interactive builder card */
+    .builder{
+      background: rgba(10,12,18,0.66);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-2);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .builder .top{
+      padding: 16px; display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background:
+        radial-gradient(60% 120% at 0% 0%, rgba(124,184,255,0.08), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    }
+    .status-led{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #42ffb4; box-shadow: 0 0 12px #42ffb4;
+    }
+    .builder-body{
+      display: grid; grid-template-columns: 1fr; gap: 0; position: relative;
+    }
+    .builder-panels{
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 14px; position: relative;
+    }
+    .panel{
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .panel h4{
+      margin: 0 0 10px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #b8c8e6;
+    }
+    label{
+      display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 10px;
+    }
+    .row{
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .chip{
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 10px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; cursor: pointer;
+      color: var(--ink); font-size: 12px; user-select: none;
+      transition: background .15s ease, transform .15s ease, border-color .2s ease;
+    }
+    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.07); }
+    .chip.active{
+      background: linear-gradient(135deg, rgba(124,247,207,0.2), rgba(124,184,255,0.18));
+      border-color: rgba(124,247,207,0.5);
+      box-shadow: inset 0 0 20px rgba(124,247,207,0.12);
+    }
+    input[type="range"]{
+      width: 100%;
+      accent-color: var(--accent);
+    }
+    .switch{
+      --s: 26px;
+      width: 54px; height: var(--s);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px; position: relative; cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .switch::after{
+      content:""; position: absolute; top: 2px; left: 2px;
+      width: calc(var(--s) - 4px); height: calc(var(--s) - 4px);
+      border-radius: 50%;
+      background: linear-gradient(180deg, #fff, #dfe8ff);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.6) inset;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .switch.active{
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      border-color: transparent;
+    }
+    .switch.active::after{ transform: translateX(28px); background: #042b2a; box-shadow: 0 6px 16px rgba(124,247,207,0.45) }
+
+    .live-preview{
+      border-top: 1px dashed rgba(255,255,255,0.1);
+      padding: 10px 14px 14px; display: grid; gap: 10px;
+    }
+    .preview-line{
+      display: grid; grid-template-columns: 1fr auto; gap: 8px;
+      font-family: JetBrainsMono, ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12px; color: #cfe5ff;
+    }
+    .mono-muted{ color: #8fb1de; }
+    .tag{
+      padding: 2px 8px; border-radius: 999px; background: rgba(124,184,255,0.12); border: 1px solid rgba(124,184,255,0.3);
+      color: #b7d6ff; font-size: 11px;
+    }
+
+    /* Floating micro cards */
+    .floating{
+      position: relative; display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-top: 24px;
+    }
+    .float-card{
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 12px;
+      box-shadow: var(--shadow);
+      transform: translateZ(0);
+      transition: transform .2s ease;
+    }
+    .float-card:hover{ transform: translateY(-2px); }
+    .sparkline{ height: 42px; width: 100%; display: block; background: linear-gradient(180deg, rgba(124,247,207,0.15), transparent); border-radius: 8px; position: relative; overflow: hidden; }
+    .sparkline canvas{ position: absolute; inset: 0; }
+    .mini-row{ display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+    .mini-row b{ color: var(--ink); }
+
+    /* Feature section */
+    .section{
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 40px auto; padding: 0 18px;
+    }
+    .grid-3{
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .card{
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 16px; box-shadow: var(--shadow);
+    }
+    .card h3{ margin: 0 0 8px; font-size: 18px; }
+    .card p{ margin: 0; color: var(--muted); font-size: 14px; }
+
+    .ribbon{
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(90deg, rgba(124,247,207,0.18), rgba(124,184,255,0.18));
+      border: 1px solid rgba(124,247,207,0.4);
+      padding: 8px 12px; border-radius: 999px; color: #dffff6; font-size: 12px;
+    }
+
+    .marquee{
+      overflow: hidden; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+      mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+    .marquee-track{
+      display: flex; gap: 28px; padding: 10px; animation: slide 18s linear infinite;
+      white-space: nowrap; font-family: JetBrainsMono, ui-monospace, monospace;
+      font-size: 13px; color: #bfe; align-items: center;
+    }
+    @keyframes slide{
+      from{ transform: translateX(0); }
+      to{ transform: translateX(-50%); }
+    }
+    .badge{
+      padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(124,247,207,0.35);
+      background: rgba(124,247,207,0.08); color: #d2fff2;
+    }
+
+    .footer{
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 24px 18px; color: var(--muted); text-align: center; font-size: 13px;
+      position: relative; z-index: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; }
+      .builder-panels{ grid-template-columns: 1fr; }
+      .grid-3{ grid-template-columns: 1fr; }
+      .floating{ grid-template-columns: 1fr; }
+      .center-tabs{ display: none; }
+    }
+  </style>
+  <meta name="description" content="Build a no-code AI Agent that researches and trades Solana memecoins. Ultra-fast, secure, and interactive—deploy in minutes with personalized strategies." />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "lit": "https://cdn.jsdelivr.net/npm/lit@3/+esm",
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="aurora"></div>
+
+  <header>
+    <nav class="nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <span>Glyph Agents</span>
+      </div>
+      <div class="center-tabs">
+        <a href="#features">Features</a>
+        <a href="#builder">Builder</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#about">About</a>
+      </div>
+      <div class="cta-row">
+        <button class="btn ghost" id="demoWallet">Connect Wallet</button>
+        <button class="btn primary" id="launch">Launch Builder</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="hero" id="builder">
+    <section>
+      <div class="pill"><span class="dot"></span> No‑Code Solana Agent Builder</div>
+      <h1 class="headline">Design an AI Agent to research and trade Solana memecoins — just by choosing attributes.</h1>
+      <p class="sub">
+        Tailor intelligence, risk, and market behaviors. Your agent hunts new launches, reads on‑chain signals, and executes with precision on Solana’s lightning network.
+        Backtested blueprints. One‑click deploy.
+      </p>
+      <div class="hero-cta">
+        <button class="btn primary" id="getStarted">Start Free</button>
+        <button class="btn" id="watchRun">Watch Agent Sim</button>
+      </div>
+
+      <div class="floating">
+        <div class="float-card">
+          <div class="mini-row">
+            <span>Agent Throughput</span><b><span id="tp-val">0</span> tx/min</b>
+          </div>
+          <div class="sparkline"><canvas id="spark1"></canvas></div>
+        </div>
+        <div class="float-card">
+          <div class="mini-row">
+            <span>Discovery Latency</span><b><span id="lat-val">0</span> ms</b>
+          </div>
+          <div class="sparkline"><canvas id="spark2"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="builder" aria-label="Agent Builder">
+      <div class="top">
+        <div class="status-led" id="led"></div>
+        <strong>Agent Blueprint</strong>
+        <span class="tag" style="margin-left:auto;">Sim Mode</span>
+      </div>
+      <div class="builder-body">
+        <div class="builder-panels">
+          <div class="panel">
+            <h4>Personality</h4>
+            <div class="row" id="personality">
+              <div class="chip" data-value="scout">Scout</div>
+              <div class="chip" data-value="sniper">Sniper</div>
+              <div class="chip" data-value="guardian">Guardian</div>
+              <div class="chip" data-value="degen">Degen</div>
+            </div>
+            <label>
+              Intelligence Level
+              <input type="range" id="intel" min="1" max="10" value="7">
+            </label>
+            <label>
+              Risk Appetite
+              <input type="range" id="risk" min="1" max="10" value="5">
+            </label>
+            <div class="row">
+              <label>
+                Auto-Trade
+                <div class="switch" id="auto"></div>
+              </label>
+              <label>
+                Rug Detector
+                <div class="switch active" id="rug"></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h4>Strategy</h4>
+            <div class="row" id="strategy">
+              <div class="chip active" data-value="momentum">Momentum</div>
+              <div class="chip" data-value="mean-revert">Mean-Revert</div>
+              <div class="chip" data-value="launch-sniff">Launch Sniff</div>
+              <div class="chip" data-value="social-surge">Social Surge</div>
+            </div>
+            <label>
+              Max Position Size (SOL)
+              <input type="range" id="pos" min="0.1" max="20" step="0.1" value="3.5">
+            </label>
+            <label>
+              Take Profit (%) / Stop Loss (%)
+              <div class="row">
+                <input type="range" id="tp" min="2" max="80" value="25">
+                <input type="range" id="sl" min="1" max="50" value="12">
+              </div>
+            </label>
+            <label>
+              Cooldown (sec)
+              <input type="range" id="cool" min="0" max="300" step="5" value="30">
+            </label>
+          </div>
+        </div>
+
+        <div class="live-preview" aria-live="polite">
+          <div class="preview-line"><span class="mono-muted">agent.personality</span> <span id="pv-personality" class="tag">scout</span></div>
+          <div class="preview-line"><span class="mono-muted">agent.strategy</span> <span id="pv-strategy" class="tag">momentum</span></div>
+          <div class="preview-line"><span class="mono-muted">risk.appetite</span> <span id="pv-risk" class="tag">5</span></div>
+          <div class="preview-line"><span class="mono-muted">trade.size.max_SOL</span> <span id="pv-pos" class="tag">3.5</span></div>
+          <div class="preview-line"><span class="mono-muted">protections.rugDetector</span> <span id="pv-rug" class="tag">on</span></div>
+          <div class="preview-line"><span class="mono-muted">exec.autoTrade</span> <span id="pv-auto" class="tag">off</span></div>
+          <div class="preview-line"><span class="mono-muted">targets.tp/sl</span> <span id="pv-tpsl" class="tag">25% / 12%</span></div>
+          <div class="preview-line"><span class="mono-muted">cooldown</span> <span id="pv-cool" class="tag">30s</span></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <section class="section" id="features">
+    <div class="ribbon" style="margin-bottom: 16px;">Built for Solana speed. Optimized for agent autonomy.</div>
+    <div class="grid-3">
+      <div class="card">
+        <h3>Memecoin Native</h3>
+        <p>Focus where it matters: Solana’s memecoin ecosystem with low fees and blazing throughput. See why specialized tools beat generalist bots highlighted by community guides and market overviews [medium.com](https://medium.com/coinmonks/best-ai-trading-bot-for-memecoins-inside-gmgns-features-c6b615a6e026).</p>
+      </div>
+      <div class="card">
+        <h3>Agentic Stack</h3>
+        <p>Compose research, reasoning, and execution steps. Explore Solana’s push toward agent-driven economies and developer kits for AI agents, including Agent Kit and frameworks referenced on the official site [solana.com](https://solana.com/ai).</p>
+      </div>
+      <div class="card">
+        <h3>Secure By Design</h3>
+        <p>Policy-scoped execution and simulated dry-runs let you validate logic before deploying. Learn how teams approach secure key and policy control for agents in practical guides like Helius’ writeup [helius.dev](https://www.helius.dev/blog/how-to-build-a-secure-ai-agent-on-solana).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how-it-works">
+    <div class="card" style="margin-bottom:16px;">
+      <h3>How it works</h3>
+      <p>Pick attributes → Simulate behavior → Deploy with your preferred wallet → Monitor and iterate. Solana’s AI initiative outlines how AI can make development and usage easier at scale [solana.com](https://solana.com/developers/guides/getstarted/intro-to-ai).</p>
+    </div>
+    <div class="marquee">
+      <div class="marquee-track" id="marquee">
+        <span class="badge">On‑chain Signals</span>
+        <span class="badge">New Launch Radar</span>
+        <span class="badge">Liquidity Watch</span>
+        <span class="badge">Rug‑Pattern Heuristics</span>
+        <span class="badge">Social Momentum</span>
+        <span class="badge">Auto Take‑Profit</span>
+        <span class="badge">Policy Controls</span>
+        <span class="badge">Cooldown Throttling</span>
+        <span class="badge">Backtest Sims</span>
+        <span class="badge">Risk Buckets</span>
+        <!-- Duplicated for infinite loop feel -->
+        <span class="badge">On‑chain Signals</span>
+        <span class="badge">New Launch Radar</span>
+        <span class="badge">Liquidity Watch</span>
+        <span class="badge">Rug‑Pattern Heuristics</span>
+        <span class="badge">Social Momentum</span>
+        <span class="badge">Auto Take‑Profit</span>
+        <span class="badge">Policy Controls</span>
+        <span class="badge">Cooldown Throttling</span>
+        <span class="badge">Backtest Sims</span>
+        <span class="badge">Risk Buckets</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="grid-3">
+      <div class="card">
+        <h3>Why Glyph?</h3>
+        <p>We obsess over the details: tactile UI, instant feedback, and simulation-first workflows. Launch agents safely and iterate quickly.</p>
+      </div>
+      <div class="card">
+        <h3>Agent Marketplace</h3>
+        <p>Share or clone proven blueprints. Discover specialized roles and strategies. Inspired by the rise of agent platforms in the ecosystem [superioragents.com](https://superioragents.com/).</p>
+      </div>
+      <div class="card">
+        <h3>Open to Integrations</h3>
+        <p>We align with community SDKs to interface with 30+ Solana protocols and beyond, following the broader Solana x AI direction [solana.com](https://solana.com/ai).</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>© 2025 Glyph Agents — Built for Solana speed. Not financial advice. Simulations are approximations.</div>
+  </footer>
+
+  <script type="module">
+    import { gsap } from "gsap";
+
+    // Simple state
+    const state = {
+      personality: 'scout',
+      strategy: 'momentum',
+      intel: 7,
+      risk: 5,
+      auto: false,
+      rug: true,
+      pos: 3.5,
+      tp: 25,
+      sl: 12,
+      cool: 30
+    };
+
+    // Utility
+    const $ = (q, el=document) => el.querySelector(q);
+    const $$ = (q, el=document) => Array.from(el.querySelectorAll(q));
+
+    // Wire chips
+    function setChipGroup(container, key){
+      const el = $(container);
+      el.addEventListener('click', e=>{
+        const chip = e.target.closest('.chip');
+        if(!chip) return;
+        $$('.chip', el).forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        state[key] = chip.dataset.value;
+        reflect();
+        pingLED();
+      });
+    }
+    setChipGroup('#personality', 'personality');
+    setChipGroup('#strategy', 'strategy');
+
+    // Switches
+    function bindSwitch(id, key){
+      const s = $(id);
+      s.addEventListener('click', ()=>{
+        s.classList.toggle('active');
+        state[key] = s.classList.contains('active');
+        reflect();
+        pingLED();
+      });
+    }
+    bindSwitch('#auto','auto');
+    bindSwitch('#rug','rug');
+
+    // Ranges
+    function bindRange(id, key, onFormat){
+      const r = $(id);
+      const handler = ()=>{
+        let v = r.valueAsNumber || parseFloat(r.value);
+        state[key] = v;
+        reflect(onFormat);
+      };
+      r.addEventListener('input', handler);
+      handler();
+    }
+    bindRange('#intel','intel');
+    bindRange('#risk','risk');
+    bindRange('#pos','pos');
+    bindRange('#tp','tp');
+    bindRange('#sl','sl');
+    bindRange('#cool','cool');
+
+    // Preview reflect
+    function reflect(){
+      $('#pv-personality').textContent = state.personality;
+      $('#pv-strategy').textContent = state.strategy;
+      $('#pv-risk').textContent = String(state.risk);
+      $('#pv-pos').textContent = String(state.pos.toFixed(1));
+      $('#pv-rug').textContent = state.rug ? 'on' : 'off';
+      $('#pv-auto').textContent = state.auto ? 'on' : 'off';
+      $('#pv-tpsl').textContent = `${state.tp}% / ${state.sl}%`;
+      $('#pv-cool').textContent = `${Math.round(state.cool)}s`;
+    }
+
+    // LED ping micro animation
+    function pingLED(){
+      const led = $('#led');
+      gsap.fromTo(led, {scale: 0.8, opacity: 0.6}, {scale: 1, opacity: 1, duration: 0.25, ease: "power2.out"});
+    }
+
+    // Sparkline generation (procedural)
+    function genSeries(n, start=50, drift=6){
+      const out = [];
+      let v = start + (Math.random() * 10 - 5);
+      for(let i=0;i<n;i++){
+        v += (Math.random() - 0.5) * drift;
+        if(v < 5) v = 5;
+        out.push(v);
+      }
+      return out;
+    }
+    function drawSpark(canvas, series, color='rgba(124,247,207,1)'){
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const w = canvas.clientWidth || 300;
+      const h = canvas.clientHeight || 40;
+      canvas.width = w*dpr; canvas.height = h*dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr,dpr);
+      ctx.clearRect(0,0,w,h);
+      const min = Math.min(...series), max = Math.max(...series);
+      const norm = v => h - ((v - min) / (max - min + 1e-6)) * (h-6) - 3;
+
+      ctx.lineWidth = 2; ctx.strokeStyle = color;
+      ctx.beginPath();
+      series.forEach((v,i)=>{
+        const x = i/(series.length-1) * (w-6) + 3;
+        const y = norm(v);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+
+      // glow
+      const grad = ctx.createLinearGradient(0,0,0,h);
+      grad.addColorStop(0, color.replace('1)', '0.35)'));
+      grad.addColorStop(1, color.replace('1)', '0)'));
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.6;
+      ctx.lineTo(w-3,h-3); ctx.lineTo(3,h-3); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    const s1 = $('#spark1'), s2 = $('#spark2');
+    let series1 = genSeries(60, 40, 5);
+    let series2 = genSeries(60, 80, 3);
+    function renderSparks(){
+      drawSpark(s1, series1, 'rgba(124,247,207,1)');
+      drawSpark(s2, series2, 'rgba(124,184,255,1)');
+    }
+    renderSparks();
+    window.addEventListener('resize', renderSparks);
+
+    // Animated metrics
+    function animateNumber(el, to, duration=0.8){
+      const from = parseFloat(el.textContent)||0;
+      const obj = {v: from};
+      gsap.to(obj,{v: to, duration, ease: "power2.out", onUpdate(){ el.textContent = obj.v.toFixed(0); }});
+    }
+    // Simulate dynamic metrics
+    setInterval(()=>{
+      // shift series
+      series1.shift(); series1.push(series1.at(-1) + (Math.random() - 0.5)*6);
+      series2.shift(); series2.push(series2.at(-1) + (Math.random() - 0.5)*3);
+      renderSparks();
+
+      // Update metrics based on state heuristics
+      const speedFactor = (state.intel*0.3 + (state.strategy==='launch-sniff'?4:0) + (state.auto?3:0)) - (state.cool/60);
+      const tpVal = Math.max(2, Math.min(150, 12 + speedFactor*3 + Math.random()*6));
+      const latVal = Math.max(30, Math.min(900, 300 - speedFactor*22 + Math.random()*80 + (state.rug?30:0)));
+
+      animateNumber($('#tp-val'), tpVal);
+      animateNumber($('#lat-val'), latVal);
+    }, 900);
+
+    // Hero buttons
+    $('#getStarted').addEventListener('click', ()=>{
+      gsap.to(window, {duration: 0.6, scrollTo: {y: "#builder", offsetY: 70}, ease: "power2.out"});
+    });
+    $('#watchRun').addEventListener('click', ()=>{
+      // Run a quick "sim" ping
+      pingLED();
+      const btn = $('#watchRun');
+      gsap.fromTo(btn, {y:0}, {y:-3, yoyo:true, repeat:1, duration:0.15});
+    });
+
+    // Wallet connect demo (procedural “mock”)
+    $('#demoWallet').addEventListener('click', ()=>{
+      const btn = $('#demoWallet');
+      btn.disabled = true;
+      btn.textContent = "Connecting...";
+      setTimeout(()=>{
+        btn.textContent = "Wallet: 4f9...Xy2";
+        btn.classList.add('primary');
+      }, 900);
+    });
+
+    // Fancy hover parallax for builder
+    const builder = document.querySelector('.builder');
+    builder.addEventListener('mousemove', (e)=>{
+      const r = builder.getBoundingClientRect();
+      const cx = (e.clientX - r.left)/r.width - 0.5;
+      const cy = (e.clientY - r.top)/r.height - 0.5;
+      builder.style.transform = `perspective(800px) rotateX(${cy * -3}deg) rotateY(${cx * 3}deg) translateZ(0)`;
+    });
+    builder.addEventListener('mouseleave', ()=>{
+      builder.style.transform = `perspective(800px) rotateX(0deg) rotateY(0deg)`;
+    });
+
+    // Keyboard accessibility for chips
+    $$('#personality .chip, #strategy .chip').forEach(chip=>{
+      chip.setAttribute('tabindex','0');
+      chip.addEventListener('keydown', e=>{
+        if(e.key === 'Enter' || e.key === ' '){
+          chip.click();
+          e.preventDefault();
+        }
+      });
+    });
+
+    // Import note: Provide discovery links via citations in features/about sections.
+    // References:
+    // - Medium overview on memecoin bot landscape (GMGN vs generalists)
+    // - Solana x AI initiatives and agent kits
+    // - Secure agent patterns and key management
+    // - Getting started with AI tools on Solana
+    // - Agent marketplace examples
+
+    // Poly scrollTo via GSAP ScrollTo plugin alternative (minimal)
+    // Since we didn't import GSAP's ScrollTo plugin, emulate a smooth scroll:
+    if (!('scrollBehavior' in document.documentElement.style)) {
+      // simple smooth scroll fallback
+      const smoothScroll = (target) => {
+        const top = typeof target === 'string' ? document.querySelector(target).getBoundingClientRect().top + window.pageYOffset - 70 : target;
+        const start = window.pageYOffset;
+        const change = top - start;
+        const startTime = performance.now();
+        const dur = 600;
+        function animate(t){
+          const p = Math.min(1, (t - startTime)/dur);
+          const ease = 1 - Math.pow(1-p, 3);
+          window.scrollTo(0, start + change*ease);
+          if(p<1) requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+      };
+      document.querySelector('#getStarted').onclick = ()=> smoothScroll('#builder');
+    }
+
+    // Procedural placeholder "logos" in marquee: add small moving dots inside badges
+    $$('#how-it-works .badge').forEach((b,i)=>{
+      const dot = document.createElement('span');
+      dot.style.display='inline-block';
+      dot.style.width='6px'; dot.style.height='6px';
+      dot.style.marginLeft='8px'; dot.style.borderRadius='50%';
+      dot.style.boxShadow='0 0 8px rgba(124,247,207,0.9)';
+      dot.style.background=i%2? 'radial-gradient(circle at 30% 30%, #fff, #7cf7cf)' : 'radial-gradient(circle at 30% 30%, #fff, #7cb8ff)';
+      b.appendChild(dot);
+      const t = gsap.to(dot, {x: 8, yoyo: true, repeat: -1, duration: 1.2 + Math.random()*0.8, ease: "sine.inOut"});
+    });
+
+    // Initialize default chip for personality
+    // Set first chip active if none
+    const pFirst = $('#personality .chip');
+    pFirst.classList.add('active');
+
+    // Helpful feature hints tooltips (procedural)
+    function hint(el, text){
+      el.addEventListener('mouseenter', ()=>{
+        const tip = document.createElement('div');
+        tip.textContent = text;
+        tip.style.position='fixed';
+        tip.style.pointerEvents='none';
+        tip.style.padding='8px 10px';
+        tip.style.fontSize='12px';
+        tip.style.color='#031a1a';
+        tip.style.background='linear-gradient(135deg, #7cf7cf, #7cb8ff)';
+        tip.style.borderRadius='10px';
+        tip.style.boxShadow='0 10px 20px rgba(0,0,0,0.25)';
+        tip.style.zIndex='10';
+        document.body.appendChild(tip);
+        function move(e){
+          tip.style.left = (e.clientX + 14) + 'px';
+          tip.style.top = (e.clientY + 14) + 'px';
+        }
+        move.last = move;
+        el.addEventListener('mousemove', move);
+        el.addEventListener('mouseleave', ()=>{
+          tip.remove();
+          el.removeEventListener('mousemove', move);
+        }, {once:true});
+      });
+    }
+    hint($('#auto'), 'Allow your agent to execute buys/sells automatically per your rules.');
+    hint($('#rug'), 'Enable heuristics that attempt to avoid known rug patterns.');
+    hint($('#pos'), 'Maximum SOL allocated per position.');
+    hint($('#tp'), 'Take Profit threshold.');
+    hint($('#sl'), 'Stop Loss threshold.');
+
+    // Interactive launch
+    $('#launch').addEventListener('click', ()=>{
+      // Soft confirm with a procedural "signature waveform"
+      const overlay = document.createElement('div');
+      overlay.style.position='fixed'; overlay.style.inset='0'; overlay.style.backdropFilter='blur(6px)';
+      overlay.style.background='rgba(6,8,12,0.6)'; overlay.style.display='grid'; overlay.style.placeItems='center';
+      overlay.style.zIndex='20';
+      const modal = document.createElement('div');
+      modal.style.width='min(560px, 92vw)'; modal.style.background='rgba(255,255,255,0.06)';
+      modal.style.border='1px solid rgba(255,255,255,0.14)'; modal.style.borderRadius='18px'; modal.style.padding='16px';
+      modal.style.boxShadow='0 30px 60px rgba(0,0,0,0.4)';
+
+      const title = document.createElement('div');
+      title.textContent = 'Simulated Deploy';
+      title.style.fontWeight='800'; title.style.margin='4px 0 8px';
+      const wave = document.createElement('canvas'); wave.height=120; wave.style.width='100%'; wave.style.borderRadius='12px';
+      const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px'; row.style.marginTop='12px';
+      const cancel = document.createElement('button'); cancel.className='btn'; cancel.textContent='Cancel';
+      const deploy = document.createElement('button'); deploy.className='btn primary'; deploy.textContent='Sign & Deploy';
+
+      row.append(cancel, deploy);
+      modal.append(title, wave, row);
+      overlay.append(modal);
+      document.body.appendChild(overlay);
+
+      // Draw procedural waveform
+      const ctx = wave.getContext('2d');
+      function drawWave(t=0){
+        const dpr = window.devicePixelRatio || 1;
+        const w = wave.clientWidth; const h = wave.height;
+        wave.width = w*dpr; wave.height = h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+        ctx.clearRect(0,0,w,h);
+        ctx.fillStyle='rgba(124,184,255,0.08)';
+        ctx.fillRect(0,0,w,h);
+        ctx.lineWidth = 2;
+        const colors = ['#7cf7cf','#7cb8ff','#ff89f7'];
+        colors.forEach((col, idx)=>{
+          ctx.strokeStyle = col; ctx.beginPath();
+          for(let x=0; x<=w; x++){
+            const y = h/2 + Math.sin((x*0.02)+(t*0.003)+idx)* (20 + idx*6) + (Math.sin((x*0.007)+t*0.004)*8);
+            if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          }
+          ctx.stroke();
+        });
+        wave._anim = requestAnimationFrame(()=>drawWave(t+16));
+      }
+      drawWave();
+
+      cancel.onclick = ()=>{ cancelAnimationFrame(wave._anim); overlay.remove(); };
+      deploy.onclick = ()=>{
+        deploy.disabled = true; deploy.textContent = 'Deploying...';
+        setTimeout(()=>{
+          deploy.textContent = 'Done ✓';
+          setTimeout(()=>{ overlay.remove(); }, 500);
+        }, 900);
+      };
+    });
+
+    // Enhance tabs with smooth scroll
+    $$('.center-tabs a').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const target = a.getAttribute('href');
+        document.querySelector(target).scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
+    // Accessibility: allow range input labels to be focusable
+    $$('label').forEach(l=> l.tabIndex = 0);
+  </script>
+</body>
+</html>
